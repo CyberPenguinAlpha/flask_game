@@ -31,10 +31,25 @@
             color: white; /* White text for the buttons */
             border: none;
             border-radius: 5px; /* Rounded corners */
+            transition: transform 0.2s; /* Add smooth transition */
         }
 
         button:hover {
             background-color: #5a5a5a; /* Slightly darker gray on hover */
+        }
+
+        /* Animation for blow-up effect */
+        .blow-up {
+            animation: blowUp 0.4s forwards; /* Scale the button over 0.4 seconds */
+        }
+
+        @keyframes blowUp {
+            0% {
+                transform: scale(1); /* Initial size */
+            }
+            100% {
+                transform: scale(1.5); /* Scaled size */
+            }
         }
 
         a {
@@ -54,19 +69,19 @@
     <h1>Welcome to the Mystery Adventure Game!</h1>
     <h2>Select a Scenario:</h2>
 
-    <!-- Scenario Buttons with Confetti Effect and Delayed Navigation -->
-    <button onclick="triggerConfettiAndNavigate('/scenario/1')">Scenario 1: The Lost Forest Path</button>
+    <!-- Scenario Buttons with Confetti Effect, Blow-Up, and Delayed Navigation -->
+    <button onclick="handleClick(this, '/scenario/1')">Scenario 1: The Lost Forest Path</button>
 
-    <button onclick="triggerConfettiAndNavigate('/scenario/2')">Scenario 2: The Mystery of the Hidden Treasure</button>
+    <button onclick="handleClick(this, '/scenario/2')">Scenario 2: The Mystery of the Hidden Treasure</button>
 
-    <button onclick="triggerConfettiAndNavigate('/scenario/3')">Scenario 3: Escape from the Wizard's Castle</button>
+    <button onclick="handleClick(this, '/scenario/3')">Scenario 3: Escape from the Wizard's Castle</button>
 
     <!-- Add canvas-confetti via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
-    <!-- Trigger Confetti and Delay Navigation -->
+    <!-- JavaScript for Confetti, Blow-Up Effect, and Delayed Navigation -->
     <script>
-        function triggerConfettiAndNavigate(url) {
+        function handleClick(button, url) {
             // Trigger the confetti effect
             confetti({
                 particleCount: 100,
@@ -74,7 +89,10 @@
                 origin: { y: 0.6 }
             });
 
-            // Delay the navigation by 1.5 seconds to allow the confetti effect to be visible
+            // Add the blow-up class to the clicked button
+            button.classList.add('blow-up');
+
+            // Delay the navigation by 1.5 seconds to allow the confetti and animation to play
             setTimeout(function() {
                 window.location.href = url;
             }, 1500);  // 1500 milliseconds = 1.5 seconds
