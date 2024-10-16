@@ -54,19 +54,31 @@
     <h1>Welcome to the Mystery Adventure Game!</h1>
     <h2>Select a Scenario:</h2>
 
-    <!-- Scenario 1 Button -->
-    <a href="/scenario/1">
-        <button>Scenario 1: The Lost Forest Path</button>
-    </a>
-    
-    <!-- Scenario 2 Button -->
-    <a href="/scenario/2">
-        <button>Scenario 2: The Mystery of the Hidden Treasure</button>
-    </a>
-    
-    <!-- Scenario 3 Button -->
-    <a href="/scenario/3">
-        <button>Scenario 3: Escape from the Wizard's Castle</button>
-    </a>
+    <!-- Scenario Buttons with Confetti Effect and Delayed Navigation -->
+    <button onclick="triggerConfettiAndNavigate('/scenario/1')">Scenario 1: The Lost Forest Path</button>
+
+    <button onclick="triggerConfettiAndNavigate('/scenario/2')">Scenario 2: The Mystery of the Hidden Treasure</button>
+
+    <button onclick="triggerConfettiAndNavigate('/scenario/3')">Scenario 3: Escape from the Wizard's Castle</button>
+
+    <!-- Add canvas-confetti via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <!-- Trigger Confetti and Delay Navigation -->
+    <script>
+        function triggerConfettiAndNavigate(url) {
+            // Trigger the confetti effect
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            // Delay the navigation by 1.5 seconds to allow the confetti effect to be visible
+            setTimeout(function() {
+                window.location.href = url;
+            }, 1500);  // 1500 milliseconds = 1.5 seconds
+        }
+    </script>
 </body>
 </html>
