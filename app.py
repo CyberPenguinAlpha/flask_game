@@ -7,7 +7,8 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 # Load API key from environment variable
-genai.configure(KEY)
+api_key = os.environ.get('KEY')
+genai.configure(api_key)
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 # Route for the welcome page (root URL)
