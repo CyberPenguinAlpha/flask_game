@@ -1,4 +1,4 @@
-from google.colab import userdata #potential exportable?
+#from google.colab import userdata #potential exportable?
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import os
