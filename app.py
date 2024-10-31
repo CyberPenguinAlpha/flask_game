@@ -1,4 +1,3 @@
-from google.colab import userdata #potential exportable?
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import os
@@ -7,7 +6,7 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 # Load API key from environment variable
-genai.configure(api_key=userdata.get('Key'))
+genai.configure(api_key=os.environ.get("KEY"))
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 # Route for the welcome page (root URL)
@@ -22,15 +21,18 @@ def scenario(scenario_id):
     scenarios = {
         1: {
             "title": "Burning Building",
-            "description": "You’re stuck in a building that’s on fire! The flames are getting closer, and thick smoke fills the air, making it hard to see and breathe. You can feel the heat all around you. It’s important to stay calm and think fast! You need to find a safe way out and avoid dangerous things like the fire and smoke. Make smart choices to escape safely before it’s too late!",
+            "description": "You’re stuck in a building that’s on fire! The flames are getting closer, and thick smoke fills the air...",
+            "question": "What actions will you take to stay safe and find a way out?"
         },
         2: {
-            "title": "Forest Hike gone wrong",
-            "description": "You’re on an exciting adventure, hiking through a beautiful forest. Everything seems fun until you realize you’ve wandered off the trail and can’t find your way back! The tall trees look the same, and the paths seem to twist and turn in every direction. The sun is starting to set, and you know it’s important to stay calm. How will you figure out how to get back to safety? Remember, staying smart and careful is key!",
+            "title": "Forest Hike Gone Wrong",
+            "description": "You’re on an exciting adventure, hiking through a beautiful forest. Everything seems fun until you realize you’ve wandered off...",
+            "question": "What steps will you take to find your way back to safety?"
         },
         3: {
             "title": "Deserted Island",
-            "description": "You’ve just woken up on a sunny, sandy beach, but something feels off. You quickly realize that you’re all alone on a deserted island! The gentle waves crash against the shore, and there are no other people around. You must come up with a plan to figure out what to do next. How can you find your way home?",
+            "description": "You’ve just woken up on a sunny, sandy beach, but something feels off...",
+            "question": "How will you survive and find a way back home?"
         }
     }
 
