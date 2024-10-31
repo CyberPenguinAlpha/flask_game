@@ -1,3 +1,4 @@
+from google.colab import userdata #potential exportable?
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import os
@@ -6,7 +7,7 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 # Load API key from environment variable
-genai.configure(KEY)
+genai.configure(api_key=userdata.get('Key'))
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 # Route for the welcome page (root URL)
