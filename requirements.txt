@@ -6,3 +6,4 @@ MarkupSafe==3.0.1
 packaging==24.1
 Werkzeug==3.0.4
 google.generativeai
+pandas
