@@ -109,6 +109,7 @@
 
     <script>
         function submitAnswer() {
+            console.log("Submit button clicked"); // Debugging line
             const userInput = document.getElementById('userInput').value;
             const scenarioId = "{{ scenario_id }}"; // Scenario title passed from Flask
 
@@ -124,6 +125,7 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log("Response received:", data); // Debugging line
                 if (data.hint_and_score) {
                     document.getElementById('hintDisplay').innerText = data.hint_and_score;
                 } else if (data.error) {
