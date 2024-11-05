@@ -118,7 +118,9 @@ def get_hint():
     - Partially correct actions: {', '.join(scenario_data['solution_space'].get('partially_correct', []))}
     - Incorrect actions: {', '.join(scenario_data['solution_space'].get('incorrect', []))}
 
-    Provide feedback: if the response is correct, encourage them; if partially correct, give hints; if incorrect, guide them subtly.
+    Please rate the student's response in terms of correctness as a percentage (0-100%), and provide a hint if the response is partially correct or incorrect.
+    Respond in this format:
+    "Correctness: [percentage]% - Hint: [your hint here]"
     """
     
     response = model.generate_content(prompt, safety_settings={
