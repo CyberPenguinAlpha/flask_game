@@ -12,6 +12,8 @@ app.secret_key = os.environ.get("SECRET_KEY", "your_fallback_secret_key")
 genai.configure(api_key=os.environ.get("KEY"))
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+CSV_FILE_PATH = "user_data.csv"  # Set this to your desired CSV file path
+
 # Define the scenarios
 scenarios = {
     1: {
@@ -99,9 +101,18 @@ def login():
 
 @app.route('/')
 def welcome():
+    # Check if the user is logged in
     if not session.get('logged_in'):
         return redirect(url_for('login'))
+    
+    # Render the welcome page if the user is logged in
     return render_template('welcome.html', scenarios=scenarios)
+
+@app.route('/logout')
+def logout():
+    # Clear the session data to ensure fresh login each time
+    session.clear()
+    return redirect(url_for('login'))
 
 # Route to handle each scenario selection
 @app.route('/scenario/<int:scenario_id>')
