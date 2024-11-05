@@ -124,7 +124,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.hint) {
+                if (data.hint_and_score) {
                     document.getElementById('hintDisplay').innerText = data.hint_and_score;
                 } else if (data.error) {
                     document.getElementById('hintDisplay').innerText = 'Error: ' + data.error;
