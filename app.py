@@ -152,6 +152,31 @@ def get_hint():
     hint_text = response.text if response and response.text else "Couldn't generate a hint at this time."
     return jsonify({"hint": hint_text})
 
+@app.route('/submit-answer', methods=['POST'])
+def submit_answer():
+    # Get data from the request
+    data = request.get_json()
+    scenario_id = data.get("scenario_id")
+    answer = data.get("answer")
+    answer_timestamp = datetime.now().isoformat()  # Capture the current timestamp
+
+    # Log the answer submission with timestamp in CSV
+    with open(CSV_FILE_PATH, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([
+            session.get('first_name', 'Unknown'),
+            session.get('last_initial', 'U'),
+            session.get('grade_level', 'Unknown'),
+            answer_timestamp,  # Timestamp of answer submission
+            scenario_id,
+            "Answer Submission",
+            answer
+        ])
+
+    # You can return a success message or hint as a response
+    return jsonify({"message": "Answer logged successfully"})
+
+
 # Run the app
 if __name__ == '__main__':
     app.run(debug=True)

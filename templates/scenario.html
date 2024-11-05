@@ -111,6 +111,26 @@
         function submitAnswer() {
             const userInput = document.getElementById('userInput').value;
             const scenarioId = "{{ scenario_id }}"; // Scenario title passed from Flask
+            
+            // Send the answer to the server
+            fetch('/submit-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    answer: userInput,
+                    scenario_id: scenarioId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById('hintDisplay').innerText = data.message;
+                } else {
+                    document.getElementById('hintDisplay').innerText = 'Error: Could not log answer.';
+                }
+            })
 
             fetch('/get_hint', {
                 method: 'POST',
