@@ -31,8 +31,19 @@ scenarios = {
     }
 }
 
-# CSV path
-CSV_FILE_PATH = "user_data.csv"
+@app.route('/show-data')
+def show_data():
+    # Path to the CSV file
+    CSV_FILE_PATH = "user_data.csv"
+
+    # Read and print the CSV content
+    try:
+        with open(CSV_FILE_PATH, mode='r') as file:
+            reader = csv.reader(file)
+            data = "<br>".join([", ".join(row) for row in reader])
+        return f"<pre>{data}</pre>"
+    except FileNotFoundError:
+        return "File not found. Make sure data has been logged.", 404
 
 # Function to provide context and evaluation criteria for each scenario
 def scenario_bank(scenario_number):
