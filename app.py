@@ -123,6 +123,7 @@ def scenario(scenario_id):
     return render_template('scenario.html', scenario_id=scenario_id, title=scenario['title'], description=scenario['description'], question=scenario['question'])
 
 @app.route('/get_hint', methods=['POST'])
+
 def get_hint():
     data = request.get_json()
     user_input = data.get("user_input")
@@ -151,14 +152,31 @@ def get_hint():
     })
     hint_text = response.text if response and response.text else "Couldn't generate a hint at this time."
     return jsonify({"hint": hint_text})
-
 @app.route('/submit-answer', methods=['POST'])
 def submit_answer():
     # Get data from the request
     data = request.get_json()
     scenario_id = data.get("scenario_id")
     answer = data.get("answer")
-    answer_timestamp = datetime.now().isoformat()  # Capture the current timestamp
+    answer_timestamp = datetime.now().isoformat()
+
+    # Initialize attempt count if it doesn't exist in the session
+    if 'attempts' not in session:
+        session['attempts'] = {}
+    if scenario_id not in session['attempts']:
+        session['attempts'][scenario_id] = 0
+
+    # Check if the player has exceeded the number of attempts
+    if session['attempts'][scenario_id] >= 3:
+        # Calculate the correctness percentage
+        correctness_percentage = calculate_correctness_percentage(scenario_id, answer)
+        return jsonify({
+            "message": f"Attempt limit reached. Correctness: {correctness_percentage}%",
+            "correctness": correctness_percentage
+        })
+    
+    # Increment attempt count
+    session['attempts'][scenario_id] += 1
 
     # Log the answer submission with timestamp in CSV
     with open(CSV_FILE_PATH, mode='a', newline='') as file:
@@ -173,10 +191,47 @@ def submit_answer():
             answer
         ])
 
-    # You can return a success message or hint as a response
-    return jsonify({"message": "Answer logged successfully"})
+    # Provide feedback after each attempt
+    if session['attempts'][scenario_id] < 3:
+        return jsonify({"message": "Attempt logged successfully. Try again."})
+    else:
+        # If it's the third attempt, calculate the correctness percentage
+        correctness_percentage = calculate_correctness_percentage(scenario_id, answer)
+        return jsonify({
+            "message": f"Final attempt reached. Correctness: {correctness_percentage}%",
+            "correctness": correctness_percentage
+        })
 
+def calculate_correctness_percentage(scenario_id, answer):
+    # Get scenario evaluation criteria
+    scenario_data = scenario_bank(scenario_id)
+    if scenario_data is None:
+        return 0
 
-# Run the app
-if __name__ == '__main__':
-    app.run(debug=True)
+    prompt = f"""
+    You are evaluating the following answer to a scenario. Rate the answer's correctness out of 100% based on how well it meets the criteria.
+
+    Scenario: {scenario_data['context']}
+    Student response: "{answer}"
+
+    Evaluation criteria:
+    - Correct actions: {', '.join(scenario_data['solution_space']['correct'])}
+    - Partially correct actions: {', '.join(scenario_data['solution_space'].get('partially_correct', []))}
+    - Incorrect actions: {', '.join(scenario_data['solution_space'].get('incorrect', []))}
+
+    Please provide a single number representing the percentage of correctness (0 to 100) for this answer.
+    """
+    
+    response = model.generate_content(prompt, safety_settings={
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    })
+
+    # Extract the percentage from the model's response
+    try:
+        correctness_percentage = int(response.text.strip())  # Ensure the response is an integer
+        return correctness_percentage
+    except (ValueError, AttributeError):
+        return 0  # Default to 0% if there's an error in response parsing
