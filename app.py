@@ -127,8 +127,16 @@ def get_hint():
         HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
     })
-    hint_text = response.text if response and response.text else "Couldn't generate a hint at this time."
-    return jsonify({"hint": hint_text})
+    # Parse the response from the model
+    if response and response.text:
+        hint_and_score = response.text.strip()
+    else:
+        hint_and_score = "Couldn't generate a hint or score at this time."
+
+    return jsonify({"hint_and_score": hint_and_score})
+
+    #hint_text = response.text if response and response.text else "Couldn't generate a hint at this time."
+    #return jsonify({"hint": hint_text})
 
 # Run the app
 if __name__ == '__main__':

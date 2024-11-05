@@ -125,14 +125,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.hint) {
-                    document.getElementById('hintDisplay').innerText = data.hint;
+                    document.getElementById('hintDisplay').innerText = data.hint_and_score;
                 } else if (data.error) {
                     document.getElementById('hintDisplay').innerText = 'Error: ' + data.error;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('hintDisplay').innerText = 'Error: Could not fetch hint.';
+                document.getElementById('hintDisplay').innerText = 'Error: Could not fetch hint and score.';
             });
         }
     </script>
