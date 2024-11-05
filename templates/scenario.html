@@ -109,34 +109,32 @@
 
     <script>
         function submitAnswer() {
-        const userInput = document.getElementById('userInput').value;
-        const scenarioId = "{{ scenario_id }}";  // Get scenario ID from Flask context
+            const userInput = document.getElementById('userInput').value;
+            const scenarioId = "{{ scenario_id }}"; // Scenario title passed from Flask
 
-        fetch('/submit-answer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                answer: userInput,
-                scenario_id: scenarioId
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.correctness !== undefined) {
-                document.getElementById('hintDisplay').innerText = `Correctness: ${data.correctness}%`;
-            } else if (data.message) {
-                document.getElementById('hintDisplay').innerText = data.message;
-            } else {
-                document.getElementById('hintDisplay').innerText = 'Error: Could not log answer.';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('hintDisplay').innerText = 'Error: Could not fetch hint.';
-        });
-    }
+            fetch('/get_hint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_input: userInput,
+                    scenario: scenarioId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.hint) {
+                    document.getElementById('hintDisplay').innerText = data.hint;
+                } else if (data.error) {
+                    document.getElementById('hintDisplay').innerText = 'Error: ' + data.error;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('hintDisplay').innerText = 'Error: Could not fetch hint.';
+            });
+        }
     </script>
 </body>
 </html>
