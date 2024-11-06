@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_file
 import os
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
@@ -145,14 +145,22 @@ def finish():
         login_timestamp = session.get('login_timestamp')
         finish_timestamp = datetime.now().isoformat()
 
-        # Append session data to CSV on finish
-        with open(CSV_FILE_PATH, mode='a', newline='') as file:
+        # Step 1: Define TEMP_CSV_FILE_PATH
+        TEMP_CSV_FILE_PATH = "user_data.csv"
+
+        # Step 2: Write session data to TEMP_CSV_FILE_PATH
+        with open(TEMP_CSV_FILE_PATH, mode='w', newline='') as file:
             writer = csv.writer(file)
+            writer.writerow(["First Name", "Last Initial", "Grade Level", "Login Timestamp", "Finish Timestamp", "Status"])
             writer.writerow([first_name, "", "", login_timestamp, finish_timestamp, "Completed Game"])
 
-        # Clear the session
-        session.clear()
-        return jsonify({"message": "Game finished. Session data saved."})
+        # Step 3: Send TEMP_CSV_FILE_PATH as a downloadable attachment
+        return send_file(
+            TEMP_CSV_FILE_PATH,
+            as_attachment=True,
+            download_name="user_data.csv",
+            mimetype="text/csv"
+        )
 
     return jsonify({"error": "User not logged in"}), 403
 
