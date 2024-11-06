@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_file
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import os
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
@@ -82,7 +82,6 @@ def login():
         # Store user info in session
         session['logged_in'] = True
         session['first_name'] = first_name
-        session['login_timestamp'] = login_timestamp
         return redirect(url_for('welcome'))
 
     return render_template('login.html')
@@ -118,12 +117,9 @@ def get_hint():
     - Correct actions: {', '.join(scenario_data['solution_space']['correct'])}
     - Partially correct actions: {', '.join(scenario_data['solution_space'].get('partially_correct', []))}
     - Incorrect actions: {', '.join(scenario_data['solution_space'].get('incorrect', []))}
-
-    Please rate the student's response in terms of correctness as a percentage (0-100%), and provide a hint if the response is partially correct or incorrect.
-    Respond in this format:
-    "Correctness: [percentage]% - Hint: [your hint here]"
+    Provide feedback: if the response is correct, encourage them; if partially correct, give hints; if incorrect, guide them subtly.
     """
-    
+
     response = model.generate_content(prompt, safety_settings={
         HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
         HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
@@ -135,34 +131,7 @@ def get_hint():
         hint_and_score = response.text.strip()
     else:
         hint_and_score = "Couldn't generate a hint or score at this time."
-
     return jsonify({"hint_and_score": hint_and_score})
-# New finish route to log end of game session
-@app.route('/finish', methods=['POST'])
-def finish():
-    if session.get('logged_in'):
-        first_name = session.get('first_name')
-        login_timestamp = session.get('login_timestamp')
-        finish_timestamp = datetime.now().isoformat()
-
-        # Step 1: Define TEMP_CSV_FILE_PATH
-        TEMP_CSV_FILE_PATH = "user_data.csv"
-
-        # Step 2: Write session data to TEMP_CSV_FILE_PATH
-        with open(TEMP_CSV_FILE_PATH, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(["First Name", "Last Initial", "Grade Level", "Login Timestamp", "Finish Timestamp", "Status"])
-            writer.writerow([first_name, "", "", login_timestamp, finish_timestamp, "Completed Game"])
-
-        # Step 3: Send TEMP_CSV_FILE_PATH as a downloadable attachment
-        return send_file(
-            TEMP_CSV_FILE_PATH,
-            as_attachment=True,
-            download_name="user_data.csv",
-            mimetype="text/csv"
-        )
-
-    return jsonify({"error": "User not logged in"}), 403
 
 # Run the app
 if __name__ == '__main__':

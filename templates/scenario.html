@@ -89,7 +89,7 @@
     <div class="container">
         <h1>{{ title }}</h1>
         <p>{{ description }}</p>
-        <!-- <h3>Question:</h3>
+        <h3>Question:</h3>
         <p>{{ question }}</p>
 
         <!-- User input area for entering answers -->
@@ -100,8 +100,6 @@
 
         <!-- Display the AI-generated hint here -->
         <div id="hintDisplay"></div>
-
-        <button onclick="finishGame()">Finish Game</button>
 
         <!-- Button to return to the home page -->
         <a href="/">
@@ -139,27 +137,6 @@
                 document.getElementById('hintDisplay').innerText = 'Error: Could not fetch hint and score.';
             });
         }
-        function finishGame() {
-        fetch('/finish', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message);
-                window.location.href = '/';
-            } else {
-                alert(data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error: Could not complete game.');
-        });
-    }
     </script>
 </body>
 </html>
