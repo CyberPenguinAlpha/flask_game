@@ -82,6 +82,7 @@ def login():
         # Store user info in session
         session['logged_in'] = True
         session['first_name'] = first_name
+        session['login_timestamp'] = login_timestamp
         return redirect(url_for('welcome'))
 
     return render_template('login.html')
@@ -136,9 +137,24 @@ def get_hint():
         hint_and_score = "Couldn't generate a hint or score at this time."
 
     return jsonify({"hint_and_score": hint_and_score})
+# New finish route to log end of game session
+@app.route('/finish', methods=['POST'])
+def finish():
+    if session.get('logged_in'):
+        first_name = session.get('first_name')
+        login_timestamp = session.get('login_timestamp')
+        finish_timestamp = datetime.now().isoformat()
 
-    #hint_text = response.text if response and response.text else "Couldn't generate a hint at this time."
-    #return jsonify({"hint": hint_text})
+        # Append session data to CSV on finish
+        with open(CSV_FILE_PATH, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([first_name, "", "", login_timestamp, finish_timestamp, "Completed Game"])
+
+        # Clear the session
+        session.clear()
+        return jsonify({"message": "Game finished. Session data saved."})
+
+    return jsonify({"error": "User not logged in"}), 403
 
 # Run the app
 if __name__ == '__main__':
