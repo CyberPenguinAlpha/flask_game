@@ -7,9 +7,6 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 # Load API key from environment variable
-#I MAY be stupid
-#api_key = os.environ.get('KEY')
-#genai.configure(api_key='KEY')
 genai.configure(api_key=os.environ["KEY"])
 
 model = genai.GenerativeModel("gemini-1.5-flash")
