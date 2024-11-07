@@ -2,8 +2,9 @@
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import os
-from flask import Flask, request, jsonify, render_template
-
+import csv
+from flask import Flask, request, render_template, redirect, url_for, session
+from datetime import datetime
 app = Flask(__name__)
 
 # Load API key from environment variable
@@ -35,7 +36,10 @@ def login():
 # Route for the welcome page (root URL)
 @app.route('/')
 def welcome():
-    return render_template('welcome.html')
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    return render_template('welcome.html', scenarios=scenarios)
+    #return render_template('welcome.html')
 
 # Dynamic route for scenario pages
 @app.route('/scenario/<int:scenario_id>')
@@ -130,6 +134,23 @@ def evaluate_response(scenario, student_response): #TODO: impliment tokenization
 student_response="I crawl low and cover my face to escape safely!" #DEMO: NEED DYNAMIC AQUISITION FROM FRONTEND
 scenario_number=1 #DEMO: NEED DYNAMIIIC AQUISITION FROM FRONTEND
 print(evaluate_response(scenario_bank(scenario_number),student_response))
+
+# New finish route to log end of game session
+@app.route('/finish', methods=['POST'])
+def finish():
+    if session.get('logged_in'):
+        first_name = session.get('first_name')
+        login_timestamp = session.get('login_timestamp')
+        finish_timestamp = datetime.now().isoformat()
+
+        # Append session data to CSV on finish
+        with open(CSV_FILE_PATH, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([first_name, "", "", login_timestamp, finish_timestamp, "Completed Game"])
+
+        # Clear the session
+        session.clear()
+
 #TODO: loging in external JSON file (needs to be reconfigured to store all responses, mabey just append a conversation log text file within each? figure out how JSON's work ig)
 #---------------------------
 if __name__ == '__main__':
