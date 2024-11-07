@@ -10,6 +10,28 @@ app = Flask(__name__)
 genai.configure(api_key=os.environ["KEY"])
 
 model = genai.GenerativeModel("gemini-1.5-flash")
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+       first_name = request.form['first_name']
+       last_initial = request.form['last_initial']
+       grade_level = request.form['grade_level']
+       login_timestamp = datetime.now().isoformat()
+
+        # Log user login in CSV
+       with open(CSV_FILE_PATH, mode='a', newline='') as file:
+          writer = csv.writer(file)
+          writer.writerow([first_name, last_initial, grade_level, login_timestamp, "", "Login"])
+
+        # Store user info in session
+        session['logged_in'] = True
+        session['first_name'] = first_name
+        session['login_timestamp'] = login_timestamp
+        return redirect(url_for('welcome'))
+
+    return render_template('login.html')
+
 # Route for the welcome page (root URL)
 @app.route('/')
 def welcome():
