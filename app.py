@@ -19,7 +19,7 @@ def login():
        last_initial = request.form['last_initial']
        grade_level = request.form['grade_level']
        login_timestamp = datetime.now().isoformat()
-
+#UPDATE ____________________________________________ call the new functions
        # Log user login in CSV
        with open(CSV_FILE_PATH, mode='a', newline='') as file:
           writer = csv.writer(file)
@@ -29,6 +29,7 @@ def login():
        session['logged_in'] = True
        session['first_name'] = first_name
        session['login_timestamp'] = login_timestamp
+#UPDATE ____________________________________________ what happened here? oh this is session logging ok so T1 is here
        return redirect(url_for('welcome'))
 
     return render_template('login.html')
@@ -141,16 +142,14 @@ def finish():
         first_name = session.get('first_name')
         login_timestamp = session.get('login_timestamp')
         finish_timestamp = datetime.now().isoformat()
-
+#UPDATE ___________________________________________ just call the new function instead and pass it the data it wants ( T2 )
         # Append session data to CSV on finish
         with open(CSV_FILE_PATH, mode='a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([first_name, "", "", login_timestamp, finish_timestamp, "Completed Game"])
-
+#____________________________________________________
         # Clear the session
         session.clear()
 
-#TODO: loging in external JSON file (needs to be reconfigured to store all responses, mabey just append a conversation log text file within each? figure out how JSON's work ig)
-#---------------------------
 if __name__ == '__main__':
     app.run(debug=True)
