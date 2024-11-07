@@ -19,16 +19,16 @@ def login():
        grade_level = request.form['grade_level']
        login_timestamp = datetime.now().isoformat()
 
-        # Log user login in CSV
+       # Log user login in CSV
        with open(CSV_FILE_PATH, mode='a', newline='') as file:
           writer = csv.writer(file)
           writer.writerow([first_name, last_initial, grade_level, login_timestamp, "", "Login"])
 
-        # Store user info in session
-        session['logged_in'] = True
-        session['first_name'] = first_name
-        session['login_timestamp'] = login_timestamp
-        return redirect(url_for('welcome'))
+       # Store user info in session
+       session['logged_in'] = True
+       session['first_name'] = first_name
+       session['login_timestamp'] = login_timestamp
+       return redirect(url_for('welcome'))
 
     return render_template('login.html')
 
