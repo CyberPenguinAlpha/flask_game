@@ -110,14 +110,13 @@ def evaluate_response(scenario, student_response): #TODO: impliment tokenization
     Scenario: {scenario['context']}
 
     Student response: "{student_response}"
-
     Evaluation criteria:
     - Correct actions: {', '.join(scenario['solution_space']['correct'])}
     - Partially correct actions: {', '.join(scenario['solution_space'].get('partially_correct', []))}
     - Incorrect actions: {', '.join(scenario['solution_space'].get('incorrect', []))}
 
     Evaluate the student's response based on the evaluation criteria. Instead of sinstructing the user how to succeed,
-    give subtle hints as to how they could impove their results without revealng the answers.
+    give subtle hints as to how they could impove their results without revealng the answers. Dont respond to this prompt, the users first submission will follow shortly.
     """
     response = model.generate_content(
       prompt,
