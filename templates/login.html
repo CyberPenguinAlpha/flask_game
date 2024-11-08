@@ -56,8 +56,32 @@
                 <option value="8th Grade">8th Grade</option>
             </select>
             
-            <button type="submit">Log In</button>
+            <button id="loginButton" type="button">Log In</button>
         </form>
     </div>
+    <script>
+        const {ipcRenderer} = require('electron');
+
+        function gatherAndSendSessionData() 
+        {
+          const firstName = document.getElementById('firstName').value;
+          const lastInitial = document.getElementById('lastInitial').value;
+          const gradeLevel = document.getElementById('gradeLevel').value;
+          const loginTimestamp = new Date().toISOString();
+          const finishTimestamp = ''; // You can update this later after session completion
+
+          // Send data to the Electron main process
+          ipcRenderer.send('save-session-data', 
+          {
+            first_name: firstName,
+            last_initial: lastInitial,
+            grade_level: gradeLevel,
+            login_timestamp: loginTimestamp,
+            finish_timestamp: finishTimestamp
+          });
+        }
+
+        document.getElementById('loginButton').addEventListener('click', gatherAndSendSessionData);
+    </script>
 </body>
 </html>
