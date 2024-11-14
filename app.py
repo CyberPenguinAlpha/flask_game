@@ -131,8 +131,8 @@ def evaluate_response(scenario, student_response): #TODO: impliment tokenization
     )
     return response.text
 
-student_response="I crawl low and cover my face to escape safely!" #DEMO: NEED DYNAMIC AQUISITION FROM FRONTEND
-scenario_number=1 #DEMO: NEED DYNAMIIIC AQUISITION FROM FRONTEND
+#student_response="I crawl low and cover my face to escape safely!" #DEMO: NEED DYNAMIC AQUISITION FROM FRONTEND
+#scenario_number=1 #DEMO: NEED DYNAMIIIC AQUISITION FROM FRONTEND
 print(evaluate_response(scenario_bank(scenario_number),student_response))
 
 # New finish route to log end of game session
