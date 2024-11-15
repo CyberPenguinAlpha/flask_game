@@ -2,6 +2,8 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
 let win;
+const { app, BrowserWindow } = require('electron');
+
 
 function createWindow()
 {
@@ -20,24 +22,106 @@ function createWindow()
     win.on('closed', ()=>{win = null;});
 }
 
-function saveSessionDataToDesktop(firstName, lastInitial, gradeLevel, loginTimestamp, finishTimestamp)
-{
-    const desktopPath = app.getPath('desktop'); 
-    const csvPath = path.join(desktopPath, 'user_sessions.csv')
+// Event listener for login submission
+document.getElementById('loginButton').addEventListener('click', function() {
+    let firstName = document.getElementById('firstName').value;
+    let lastInitial = document.getElementById('lastInitial').value;
+    let gradeLevel = document.getElementById('gradeLevel').value;
+    let loginTimestamp = new Date().toISOString();
 
-    const data = '${firstName},${lastname},${gradeLevel},${loginTimestamp},${finishTimestamp},Completed Game\n';
+    // Generate Session ID
+    sessionID = generateSessionID(firstName, lastInitial, gradeLevel, loginTimestamp);
+    
+    // Log login details in T1.csv
+    logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp);
 
-    fs.appendFile(csvPath, data, (err) => 
-        {
-            if (err) 
-                {console.error('Error writing to CSV file:', err);}
-            else 
-                {console.log('Session data saved successfully!')}
-        }
-    );
+    // Start the interaction
+    handleInteraction();
+});
+
+// Generate session ID
+function generateSessionID(firstName, lastInitial, gradeLevel, timestamp) {
+    return `${firstName.charAt(0)}${lastInitial}${gradeLevel}${timestamp}`;
 }
 
-//saveSessionDataToDesktop('John', 'D', '7', '2024-11-07T10:30:00', '2024-11-07T11:00:00');
+// Log login data to T1.csv
+function logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp) {
+    const loginData = `${sessionID},${firstName},${lastInitial},${gradeLevel},${loginTimestamp}\n`;
+    const loginFilePath = path.join(__dirname, 'T1.csv');
+    
+    // Append the login data to T1.csv
+    fs.appendFileSync(loginFilePath, loginData);
+}
+
+// Handle student interaction with Gemini
+function handleInteraction() {
+    document.getElementById('submitButton').addEventListener('click', function() {
+        studentSolution = document.getElementById('studentSolution').value;
+        const startTime = new Date().toISOString();
+
+        // Simulating the evaluation result (replace this with actual evaluation logic)
+        const evaluationResult = simulateEvaluation(studentSolution);
+
+        // Log the interaction in T2.csv
+        const endTime = new Date().toISOString();
+        const status = evaluationResult.status;
+        const aiResponse = evaluationResult.aiResponse;
+
+        logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status);
+
+        // Show the appropriate message based on the status
+        if (status === 'success') {
+            showMessage('success', 'Correct! You’ve solved the challenge.');
+        } else if (status === 'partial') {
+            showMessage('partial', 'Partially correct! Try again.');
+        } else {
+            currentAttempt++;
+            if (currentAttempt > 3) {
+                showMessage('error', 'Maximum attempts reached! Please review the challenge and try again later.');
+            } else {
+                showMessage('error', 'Incorrect solution. Please try again.');
+            }
+        }
+    });
+}
+
+// Simulated evaluation function (replace with actual AI evaluation logic)
+function simulateEvaluation(solution) {
+    // For demonstration purposes, we'll simulate some results
+    if (solution === 'correct') {
+        return { status: 'success', aiResponse: 'Great job!' };
+    } else if (solution === 'partial') {
+        return { status: 'partial', aiResponse: 'Almost there! Think about it again.' };
+    } else {
+        return { status: 'error', aiResponse: 'That’s not quite right. Please review.' };
+    }
+}
+
+// Log interaction data to T2.csv
+function logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status) {
+    const interactionData = `${startTime},${endTime},${studentSolution},${aiResponse},${status},${sessionID}\n`;
+    const interactionFilePath = path.join(__dirname, 'T2.csv');
+    
+    // Append the interaction data to T2.csv
+    fs.appendFileSync(interactionFilePath, interactionData);
+}
+
+// Show message to user
+function showMessage(type, message) {
+    const messageBox = document.getElementById('messageBox');
+    messageBox.textContent = message;
+
+    // Change message box style based on the type
+    if (type === 'success') {
+        messageBox.style.color = 'green';
+    } else if (type === 'partial') {
+        messageBox.style.color = 'orange';
+    } else {
+        messageBox.style.color = 'red';
+    }
+    messageBox.style.display = 'block';
+}
+
 
 app.whenReady().then(() => {
     createWindow();
