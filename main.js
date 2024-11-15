@@ -24,9 +24,9 @@ function createWindow()
 
 // Event listener for login submission
 document.getElementById('loginButton').addEventListener('click', function() {
-    let firstName = document.getElementById('firstName').value;
-    let lastInitial = document.getElementById('lastInitial').value;
-    let gradeLevel = document.getElementById('gradeLevel').value;
+    let firstName = document.getElementById('first_Name').value;
+    let lastInitial = document.getElementById('last_Initial').value;
+    let gradeLevel = document.getElementById('grade_Level').value;
     let loginTimestamp = new Date().toISOString();
 
     // Generate Session ID
