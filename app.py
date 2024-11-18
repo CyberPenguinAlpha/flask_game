@@ -46,7 +46,7 @@ def scenario(scenario_id):
         return "Scenario not found", 404
 
     # Render the scenario.html template with the scenario data
-    return render_template('scenario.html', title=scenario['title'], description=scenario['description'], question=scenario['question'])
+    return render_template('scenario.html', title=scenario['title'], description=scenario['description']) #, question=scenario['question'] antiquated
 
 def scenario_bank(scenario_number):
   if scenario_number == 1:
