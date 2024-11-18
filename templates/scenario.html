@@ -106,35 +106,5 @@
             <button>Back to Welcome Page</button>
         </a>
     </div>
-
-    <script>
-        function submitAnswer() {
-            const userInput = document.getElementById('userInput').value;
-            const scenario = "{{ title }}"; // Scenario title passed from Flask
-
-            fetch('/get_hint', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user_input: userInput,
-                    scenario: scenario
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.hint) {
-                    document.getElementById('hintDisplay').innerText = data.hint;
-                } else if (data.error) {
-                    document.getElementById('hintDisplay').innerText = 'Error: ' + data.error;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('hintDisplay').innerText = 'Error: Could not fetch hint.';
-            });
-        }
-    </script>
 </body>
 </html>
