@@ -5,7 +5,6 @@ const path = require('path');
 let win;
 const { app, BrowserWindow } = require('electron');
 
-
 function createWindow()
 {
     win=new BrowserWindow
@@ -110,7 +109,6 @@ function showMessage(type, message) {
     }
     messageBox.style.display = 'block';
 }
-
 
 app.whenReady().then(() => {
     createWindow();
