@@ -21,23 +21,29 @@ function createWindow()
     win.on('closed', ()=>{win = null;});
 }
 
-// Event listener for login submission
-document.getElementById('loginButton').addEventListener('click', function() {
-    let firstName = document.getElementById('first_Name').value;
-    let lastInitial = document.getElementById('last_Initial').value;
-    let gradeLevel = document.getElementById('grade_Level').value;
-    let loginTimestamp = new Date().toISOString();
+// Inject JavaScript code after the window is loaded
+    mainWindow.webContents.on('did-finish-load', () => {
+        const script = `
+        // Event listener for login submission
+        document.getElementById('loginButton').addEventListener('click', function() {
+            let firstName = document.getElementById('first_Name').value;
+            let lastInitial = document.getElementById('last_Initial').value;
+            let gradeLevel = document.getElementById('grade_Level').value;
+            let loginTimestamp = new Date().toISOString();
+        
+            // Generate Session ID
+            sessionID = generateSessionID(firstName, lastInitial, gradeLevel, loginTimestamp);
+            
+            // Log login details in T1.csv
+            logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp);
+        
+            // Start the interaction
+            handleInteraction();
+        });
+        `;
 
-    // Generate Session ID
-    sessionID = generateSessionID(firstName, lastInitial, gradeLevel, loginTimestamp);
-    
-    // Log login details in T1.csv
-    logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp);
-
-    // Start the interaction
-    handleInteraction();
-});
-
+        mainWindow.webContents.executeJavaScript(script);
+        }    
 // Generate session ID
 function generateSessionID(firstName, lastInitial, gradeLevel, timestamp) {
     return `${firstName.charAt(0)}${lastInitial}${gradeLevel}${timestamp}`;
