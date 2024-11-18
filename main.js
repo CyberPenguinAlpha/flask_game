@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron');
+const fs = require('fs');
 const path = require('path');
 
 let win;
@@ -83,18 +84,6 @@ function handleInteraction() {
             }
         }
     });
-}
-
-// Simulated evaluation function (replace with actual AI evaluation logic)
-function simulateEvaluation(solution) {
-    // For demonstration purposes, we'll simulate some results
-    if (solution === 'correct') {
-        return { status: 'success', aiResponse: 'Great job!' };
-    } else if (solution === 'partial') {
-        return { status: 'partial', aiResponse: 'Almost there! Think about it again.' };
-    } else {
-        return { status: 'error', aiResponse: 'That’s not quite right. Please review.' };
-    }
 }
 
 // Log interaction data to T2.csv
