@@ -19,7 +19,7 @@ def login():
 # Route for the welcome page (root URL)
 @app.route('/')
 def welcome():
-    return render_template('welcome.html') #, scenarios=scenarios i dont think this error'd bnefore, could be cascading failure
+    return render_template('welcome.html', scenarios=scenarios) # i dont think this error'd bnefore, could be cascading failure
 
 # Dynamic route for scenario pages
 @app.route('/scenario/<int:scenario_id>')
