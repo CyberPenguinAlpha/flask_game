@@ -43,7 +43,7 @@ function createWindow()
         `;
 
         mainWindow.webContents.executeJavaScript(script);
-        }    
+        }); 
 // Generate session ID
 function generateSessionID(firstName, lastInitial, gradeLevel, timestamp) {
     return `${firstName.charAt(0)}${lastInitial}${gradeLevel}${timestamp}`;
