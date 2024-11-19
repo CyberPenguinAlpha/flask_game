@@ -138,11 +138,16 @@
     async function toEval() {
         const studentResponse = document.getElementById('userInput').value;
         try {
-            // Make the fetch call and wait for the response
-            const response = await fetch('evaluate_response', {
-                method: 'POST',
-                body: studentResponse
-            });
+        // Prepare the form data
+        const formData = new URLSearchParams();
+        formData.append('userInput', studentResponse);
+
+        // Make the fetch call with the correct headers
+        const response = await fetch('/evaluate_response', {
+            method: 'POST',
+            body: formData,  // Send as form data
+        });
+
             // Check if the response is okay (status code 2xx)
             if (!response.ok) {
                 throw new Error('Network response was not ok');
