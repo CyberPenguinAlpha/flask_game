@@ -58,9 +58,6 @@ function logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimest
     fs.appendFileSync(loginFilePath, loginData);
 }
 
-// Handle student interaction with Gemini
-
-
 // Log interaction data to T2.csv
 function logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status) {
     const interactionData = `${startTime},${endTime},${studentSolution},${aiResponse},${status},${sessionID}\n`;
