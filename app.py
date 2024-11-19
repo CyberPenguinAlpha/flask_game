@@ -30,31 +30,31 @@ def scenario(scenario_id):
     # Define data for each scenario
     scenarios = {
         1: {
-            "id": "1"
+            "id": "1",
             "title": "Burning Building",
             "description": "You’re stuck in a building that’s on fire! The flames are getting closer, and thick smoke fills the air, making it hard to see and breathe. You can feel the heat all around you. It’s important to stay calm and think fast! You need to find a safe way out and avoid dangerous things like the fire and smoke. Make smart choices to escape safely before it’s too late!",
         },
         2: {
-            "id": "2"
+            "id": "2",
             "title": "Forest Hike gone wrong",
             "description": "You’re on an exciting adventure, hiking through a beautiful forest. Everything seems fun until you realize you’ve wandered off the trail and can’t find your way back! The tall trees look the same, and the paths seem to twist and turn in every direction. The sun is starting to set, and you know it’s important to stay calm. How will you figure out how to get back to safety? Remember, staying smart and careful is key!",
         },
         3: {
-            "id": "3"
+            "id": "3",
             "title": "Deserted Island",
             "description": "You’ve just woken up on a sunny, sandy beach, but something feels off. You quickly realize that you’re all alone on a deserted island! The gentle waves crash against the shore, and there are no other people around. You must come up with a plan to figure out what to do next. How can you find your way home?",
         }
     }
 
     # Get the correct scenario based on the scenario_id
+    session['id'] = scenario_id
     scenario = scenarios.get(scenario_id)
     if scenario is None:
         return "Scenario not found", 404
 
     # Render the scenario.html template with the scenario data
     session['logged_in'] = False
-    return render_template('scenario.html', title=scenario['title'], description=scenario['description']) #, question=scenario['question'] antiquated
-
+    return render_template('scenario.html', title=scenario['title'], description=scenario['description']) 
 def scenario_bank(scenario_number):
   if scenario_number == 1:
     scenario = {
@@ -88,7 +88,11 @@ def scenario_bank(scenario_number):
   return scenario
 
 @app.route('/evaluate_response', methods=['POST'])
-def evaluate_response(scenario, student_response): #TODO: impliment tokenization for context/resubmission, and add reply counter somehow (mabey logic based on ammount of tokens resubmited)
+def evaluate_response(): #TODO: impliment tokenization for context/resubmission, and add reply counter somehow (mabey logic based on ammount of tokens resubmited)
+    student_response = request.form['userInput'] 
+    scenario_id = session.get('id')  # Get the scenario_id from session
+    scenario = scenario_bank(scenario_id) 
+    
     prompt = f"""
     You are now a Game Master, helping the user escape this Virtual Escape Room,
     which drops them into a specific scenario, detailed below. The student will be able to submit up to Three responses,
@@ -117,8 +121,8 @@ def evaluate_response(scenario, student_response): #TODO: impliment tokenization
     )
     return response.text
 
-student_response="I crawl low and cover my face to escape safely!" #DEMO: NEED DYNAMIC AQUISITION FROM FRONTEND
-scenario_number=1 #DEMO: NEED DYNAMIIIC AQUISITION FROM FRONTEND
+#student_response="I crawl low and cover my face to escape safely!" #DEMO: NEED DYNAMIC AQUISITION FROM FRONTEND
+#scenario_number=1 #DEMO: NEED DYNAMIIIC AQUISITION FROM FRONTEND
 print(evaluate_response(scenario_bank(scenario_number),student_response))
 
 @app.route('/logout', methods=['POST'])
