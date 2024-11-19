@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
@@ -13,12 +13,15 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':        
+        session['logged_in'] = True
         return redirect(url_for('welcome'))
     return render_template('login.html')
 
 # Route for the welcome page (root URL)
 @app.route('/')
 def welcome():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     return render_template('welcome.html') #, scenarios=scenarios i dont think this error'd bnefore, could be cascading failure
 
 # Dynamic route for scenario pages
