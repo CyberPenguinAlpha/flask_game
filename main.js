@@ -59,7 +59,7 @@ function createWindow()
     });
         `;
 
-        mainWindow.webContents.executeJavaScript(script);
+        win.webContents.executeJavaScript(script);
         }); 
     
     win.on('closed', ()=>{win = null;});
