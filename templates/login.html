@@ -42,7 +42,7 @@
 <body>
     <div class="container">
         <h1>Welcome to the Virtual Escape Room</h1>
-        <form action="/login" method="post">
+        <form id="loginForm" action="/login" method="post">
             <label for="first_name">First Name:</label>
             <input type="text" id="first_name" name="first_name" required>
             
@@ -59,5 +59,43 @@
             <button id="loginButton" type="submit">Log In</button>
         </form>
     </div>
+    <script>
+    // Import Node.js modules
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+
+    // Path to save the CSV file on the Desktop
+    const desktopPath = path.join(os.homedir(), 'Desktop', 'T1.csv');
+
+    // Event listener for the login button click
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        // Prevent form submission until data is saved
+        event.preventDefault();
+        
+        // Collect form data
+        let firstName = document.getElementById('first_name').value; 
+        let lastInitial = document.getElementById('last_initial').value; 
+        let gradeLevel = document.getElementById('grade_level').value; 
+        let loginTimestamp = new Date().toISOString();
+        
+        // Generate a session ID based on user input
+        let sessionID = `${firstName.charAt(0)}${lastInitial}${gradeLevel}${loginTimestamp}`;
+        
+        // Prepare the data to be saved in CSV format
+        const loginData = `${sessionID},${firstName},${lastInitial},${gradeLevel},${loginTimestamp}\n`;
+
+        // Save the data to the CSV file
+        fs.appendFile(desktopPath, loginData, (err) => {
+            if (err) {
+                console.error('Error writing to CSV file:', err);
+            } else {
+                console.log('Login data successfully saved to T1.csv on the Desktop');
+                // Once data is saved, proceed with form submission
+                document.getElementById('loginForm').submit();
+            }
+        });
+    });
+    </script>
 </body>
 </html>
