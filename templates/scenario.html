@@ -92,7 +92,7 @@
         
         <textarea id="userInput" placeholder="Enter your answer..." rows="5" cols="50"></textarea><br>
 
-        <button id="submitButton">Submit Answer</button>
+        <button id="submitButton" onclick="submitAnswer()">Submit Answer</button>
 
         <div id="hintDisplay">The response will appear here...</div>
 
@@ -100,5 +100,30 @@
             <button onclick="session['logged_in'] = False">Back to Welcome Page</button>
         </a>
     </div>
+    <script>
+    function submitAnswer() {
+        const studentSolution = document.getElementById('studentSolution').value;
+        const startTime = new Date().toISOString();
+        const endTime = new Date().toISOString();
+        const status = evaluationResult.status;
+        const aiResponse = evaluationResult.aiResponse;
+
+        logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status);
+
+        // Show the appropriate message based on the status
+        if (status === 'success') {
+            showMessage('success', 'Correct! You’ve solved the challenge.');
+        } else if (status === 'partial') {
+            showMessage('partial', 'Partially correct! Try again.');
+        } else {
+            currentAttempt++;
+            if (currentAttempt > 3) {
+                showMessage('error', 'Maximum attempts reached! Please review the challenge and try again later.');
+            } else {
+                showMessage('error', 'Incorrect solution. Please try again.');
+            }
+        }
+    }
+</script>
 </body>
 </html>
