@@ -121,16 +121,6 @@ print(evaluate_response(scenario_bank(scenario_number),student_response))
 # New finish route to log end of game session
 @app.route('/finish', methods=['POST'])
 def finish():
-    if session.get('logged_in'):
-        first_name = session.get('first_name')
-        login_timestamp = session.get('login_timestamp')
-        finish_timestamp = datetime.now().isoformat()
-#UPDATE ___________________________________________ just call the new function instead and pass it the data it wants ( T2 )
-        # Append session data to CSV on finish
-        with open(CSV_FILE_PATH, mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([first_name, "", "", login_timestamp, finish_timestamp, "Completed Game"])
-#____________________________________________________
         # Clear the session
         session.clear()
 
