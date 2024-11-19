@@ -118,11 +118,10 @@ student_response="I crawl low and cover my face to escape safely!" #DEMO: NEED D
 scenario_number=1 #DEMO: NEED DYNAMIIIC AQUISITION FROM FRONTEND
 print(evaluate_response(scenario_bank(scenario_number),student_response))
 
-# New finish route to log end of game session
-@app.route('/finish', methods=['POST'])
-def finish():
-        # Clear the session
-        session.clear()
+@app.route('/logout')
+def logout():
+    session.clear()  # Clears all session data
+    return redirect(url_for('login'))  # Redirects the user to the login page
 
 if __name__ == '__main__':
     app.run(debug=True)
