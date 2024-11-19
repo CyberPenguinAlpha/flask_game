@@ -90,18 +90,14 @@
         <h1>{{ title }}</h1>
         <p>{{ description }}</p>
         
-        <!-- User input area for entering answers -->
         <textarea id="userInput" placeholder="Enter your answer..." rows="5" cols="50"></textarea><br>
 
-        <!-- Button to submit the answer -->
         <button onclick="submitAnswer()">Submit Answer</button>
 
-        <!-- Display the AI-generated hint here -->
-        <div id="hintDisplay">The hint will appear here...</div>
+        <div id="hintDisplay">The response will appear here...</div>
 
-        <!-- Button to return to the home page -->
         <a href="/">
-            <button>Back to Welcome Page</button>
+            <button onclick="session['logged_in'] = False">Back to Welcome Page</button>
         </a>
     </div>
 </body>
