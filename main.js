@@ -28,16 +28,35 @@ function createWindow()
             let lastInitial = document.getElementById('last_Initial').value;
             let gradeLevel = document.getElementById('grade_Level').value;
             let loginTimestamp = new Date().toISOString();
-        
-            // Generate Session ID
             sessionID = generateSessionID(firstName, lastInitial, gradeLevel, loginTimestamp);
-            
-            // Log login details in T1.csv
             logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp);
-        
-            // Start the interaction
-            handleInteraction();
+         
         });
+
+        //Event listener for answer submission
+        document.getElementById('submitButton').addEventListener('click', function() {
+        studentSolution = document.getElementById('studentSolution').value;
+        const startTime = new Date().toISOString();
+
+        const endTime = new Date().toISOString();
+        const status = evaluationResult.status;
+        const aiResponse = evaluationResult.aiResponse;
+        logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status);
+
+        // Show the appropriate message based on the status
+        if (status === 'success') {
+            showMessage('success', 'Correct! You’ve solved the challenge.');
+        } else if (status === 'partial') {
+            showMessage('partial', 'Partially correct! Try again.');
+        } else {
+            currentAttempt++;
+            if (currentAttempt > 3) {
+                showMessage('error', 'Maximum attempts reached! Please review the challenge and try again later.');
+            } else {
+                showMessage('error', 'Incorrect solution. Please try again.');
+            }
+        }
+    });
         `;
 
         mainWindow.webContents.executeJavaScript(script);
@@ -62,36 +81,7 @@ function logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimest
 }
 
 // Handle student interaction with Gemini
-function handleInteraction() {
-    document.getElementById('submitButton').addEventListener('click', function() {
-        studentSolution = document.getElementById('studentSolution').value;
-        const startTime = new Date().toISOString();
 
-        // Simulating the evaluation result (replace this with actual evaluation logic)
-        const evaluationResult = simulateEvaluation(studentSolution);
-
-        // Log the interaction in T2.csv
-        const endTime = new Date().toISOString();
-        const status = evaluationResult.status;
-        const aiResponse = evaluationResult.aiResponse;
-
-        logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status);
-
-        // Show the appropriate message based on the status
-        if (status === 'success') {
-            showMessage('success', 'Correct! You’ve solved the challenge.');
-        } else if (status === 'partial') {
-            showMessage('partial', 'Partially correct! Try again.');
-        } else {
-            currentAttempt++;
-            if (currentAttempt > 3) {
-                showMessage('error', 'Maximum attempts reached! Please review the challenge and try again later.');
-            } else {
-                showMessage('error', 'Incorrect solution. Please try again.');
-            }
-        }
-    });
-}
 
 // Log interaction data to T2.csv
 function logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status) {
