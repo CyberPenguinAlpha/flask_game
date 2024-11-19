@@ -35,31 +35,6 @@ function createWindow()
 
             document.querySelector('form').submit();
         });
-
-        //Event listener for answer submission
-        document.getElementById('submitButton').addEventListener('click', function() {
-        studentSolution = document.getElementById('studentSolution').value;
-        const startTime = new Date().toISOString();
-
-        const endTime = new Date().toISOString();
-        const status = evaluationResult.status;
-        const aiResponse = evaluationResult.aiResponse;
-        logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status);
-
-        // Show the appropriate message based on the status
-        if (status === 'success') {
-            showMessage('success', 'Correct! You’ve solved the challenge.');
-        } else if (status === 'partial') {
-            showMessage('partial', 'Partially correct! Try again.');
-        } else {
-            currentAttempt++;
-            if (currentAttempt > 3) {
-                showMessage('error', 'Maximum attempts reached! Please review the challenge and try again later.');
-            } else {
-                showMessage('error', 'Incorrect solution. Please try again.');
-            }
-        }
-    });
         `;
 
         win.webContents.executeJavaScript(script);
