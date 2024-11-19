@@ -102,40 +102,39 @@
         </form>
     </div>
     <script>
-        --------------
         // Import Node.js modules
-    const fs = require('fs');
-    const path = require('path');
-    const os = require('os');
-
-    // Path to save the CSV file on the Desktop
-    const desktopPath = path.join(os.homedir(), 'Desktop', 'T2.csv');
-
-    // Event listener for the login button click
-    document.getElementById('UIForm').addEventListener('submit', async function(event) {
-        // Prevent form submission until data is saved
-        event.preventDefault();
-
-        // Generate a session ID based on user input
-        //let sessionID = /*get this from somewhere, mabey ill have it hanging or pass it*/;
-        let userInput = document.getElementById('userInput').value;
-        let startTime = new Date().toISOString(); 
-        let reply = await toEval();
-        let endTime = new Date().toISOString();
-        // Prepare the data to be saved in CSV format
-        const loginData = `${sessionID},${startTime},${endTime}${userInput},"${reply.replace(/"/g, '""')}"\n`;
+        const fs = require('fs');
+        const path = require('path');
+        const os = require('os');
     
-        // Save the data to the CSV file
-        fs.appendFile(desktopPath, loginData, (err) => {
-            if (err) {
-                console.error('Error writing to CSV file:', err);
-            } else {
-                console.log('Login data successfully saved to T1.csv on the Desktop');
-                // Once data is saved, proceed with form submission
-                document.getElementById('loginForm').submit();
-            }
+        // Path to save the CSV file on the Desktop
+        const desktopPath = path.join(os.homedir(), 'Desktop', 'T2.csv');
+    
+        // Event listener for the login button click
+        document.getElementById('UIForm').addEventListener('submit', async function(event) {
+            // Prevent form submission until data is saved
+            event.preventDefault();
+    
+            // Generate a session ID based on user input
+            let sessionID = {{ id }};
+            let userInput = document.getElementById('userInput').value;
+            let startTime = new Date().toISOString(); 
+            let reply = await toEval();
+            let endTime = new Date().toISOString();
+            // Prepare the data to be saved in CSV format
+            const logData = `${sessionID},${startTime},${endTime}${userInput},"${reply.replace(/"/g, '""')}"\n`;
+        
+            // Save the data to the CSV file
+            fs.appendFile(desktopPath, logData, (err) => 
+            {
+                if (err) {console.error('Error writing to CSV file:', err);} 
+                else {
+                    console.log('Login data successfully saved to T1.csv on the Desktop');
+                    // Once data is saved, proceed with form submission
+                    document.getElementById('loginForm').submit();
+                }
+            });
         });
-    });
     async function toEval() {
         const studentResponse = document.getElementById('userInput').value;
         try {
@@ -160,7 +159,7 @@
             showMessage('An error occurred while evaluating your response.');
         }
     }
-        const loginData = `${sessionID},${userInput},${startTime},${endTime},,${gradeLevel},${loginTimestamp}\n`;
+    const loginData = `${sessionID},${userInput},${startTime},${endTime},,${gradeLevel},${loginTimestamp}\n`;
     // Show message to user
     function showMessage(type, message) {
         const messageBox = document.getElementById('messageBox');
