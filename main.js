@@ -12,50 +12,13 @@ function createWindow()
         height:600,
         webPreferences:
         {
-            nodeIntegration: false,
+            nodeIntegration: true,
             contextIsolation: true
         }
     })
     win.loadURL('https://flask-game-5wzz.onrender.com');
     //win.webContents.openDevTools();
-
-    // Inject JavaScript code after the window is loaded
-    win.webContents.on('did-finish-load', () => {
-        const script = `
-        // Event listener for login submission
-        document.getElementById('loginButton').addEventListener('click', function() {
-            event.preventDefault();
-            
-            let firstName = document.getElementById('first_name').value; 
-            let lastInitial = document.getElementById('last_initial').value; 
-            let gradeLevel = document.getElementById('grade_level').value; 
-            let loginTimestamp = new Date().toISOString();
-            sessionID = generateSessionID(firstName, lastInitial, gradeLevel, loginTimestamp);
-            logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp);
-
-            document.querySelector('form').submit();
-        });
-        `;
-
-        win.webContents.executeJavaScript(script);
-        }); 
-    
     win.on('closed', ()=>{win = null;});
-}
-
-
-// Generate session ID
-function generateSessionID(firstName, lastInitial, gradeLevel, timestamp) {
-    return `${firstName.charAt(0)}${lastInitial}${gradeLevel}${timestamp}`;
-}
-
-// Log login data to T1.csv
-function logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp) {
-    const loginData = `${sessionID},${firstName},${lastInitial},${gradeLevel},${loginTimestamp}\n`;
-    const loginFilePath = path.join(__dirname, 'T1.csv');
-    
-    // Append the login data to T1.csv
-    fs.appendFileSync(loginFilePath, loginData);
 }
 
 // Log interaction data to T2.csv
