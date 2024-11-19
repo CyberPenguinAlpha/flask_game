@@ -24,13 +24,16 @@ function createWindow()
         const script = `
         // Event listener for login submission
         document.getElementById('loginButton').addEventListener('click', function() {
-            let firstName = document.getElementById('first_Name').value;
-            let lastInitial = document.getElementById('last_Initial').value;
-            let gradeLevel = document.getElementById('grade_Level').value;
+            event.preventDefault();
+            
+            let firstName = document.getElementById('first_name').value; 
+            let lastInitial = document.getElementById('last_initial').value; 
+            let gradeLevel = document.getElementById('grade_level').value; 
             let loginTimestamp = new Date().toISOString();
             sessionID = generateSessionID(firstName, lastInitial, gradeLevel, loginTimestamp);
             logLoginData(sessionID, firstName, lastInitial, gradeLevel, loginTimestamp);
-         
+
+            document.querySelector('form').submit();
         });
 
         //Event listener for answer submission
