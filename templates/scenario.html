@@ -89,41 +89,78 @@
     <div class="container">
         <h1>{{ title }}</h1>
         <p>{{ description }}</p>
-        
-        <textarea id="userInput" placeholder="Enter your answer..." rows="5" cols="50"></textarea><br>
-
-        <button id="submitButton" onclick="submitAnswer()">Submit Answer</button>
-
-        <div id="messageBox">The response will appear here...</div>
-
-        <a href="/">
-            <button onclick=logOut()>Back to Welcome Page</button>
-        </a>
+        <form id="UIForm" action="/evaluate_response" method="post">    
+            <textarea id="userInput" placeholder="Enter your answer..." rows="5" cols="50"></textarea><br>
+    
+            <button id="submitButton" type="submit">Submit Answer</button> <!--onclick="submitAnswer()-->
+    
+            <div id="messageBox">The response will appear here...</div>
+    
+            <a href="/">
+                <button onclick=logOut()>Back to Welcome Page</button>
+            </a>
+        </form>
     </div>
     <script>
-    function submitAnswer() {
-        const studentSolution = document.getElementById('userInput').value;
-        const startTime = new Date().toISOString();
-        const endTime = new Date().toISOString();
-        const status = evaluationResult.status;
-        const aiResponse = evaluationResult.aiResponse;
+        --------------
+        // Import Node.js modules
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
 
-        logInteractionData(sessionID, studentSolution, aiResponse, startTime, endTime, status);
+    // Path to save the CSV file on the Desktop
+    const desktopPath = path.join(os.homedir(), 'Desktop', 'T2.csv');
 
-        // Show the appropriate message based on the status
-        if (status === 'success') {
-            showMessage('success', 'Correct! You’ve solved the challenge.');
-        } else if (status === 'partial') {
-            showMessage('partial', 'Partially correct! Try again.');
-        } else {
-            currentAttempt++;
-            if (currentAttempt > 3) {
-                showMessage('error', 'Maximum attempts reached! Please review the challenge and try again later.');
+    // Event listener for the login button click
+    document.getElementById('UIForm').addEventListener('submit', async function(event) {
+        // Prevent form submission until data is saved
+        event.preventDefault();
+
+        // Generate a session ID based on user input
+        //let sessionID = /*get this from somewhere, mabey ill have it hanging or pass it*/;
+        let userInput = document.getElementById('userInput').value;
+        let startTime = new Date().toISOString(); 
+        let reply = await toEval();
+        let endTime = new Date().toISOString();
+        // Prepare the data to be saved in CSV format
+        const loginData = `${sessionID},${startTime},${endTime}${userInput},"${reply.replace(/"/g, '""')}"\n`;
+    
+        // Save the data to the CSV file
+        fs.appendFile(desktopPath, loginData, (err) => {
+            if (err) {
+                console.error('Error writing to CSV file:', err);
             } else {
-                showMessage('error', 'Incorrect solution. Please try again.');
+                console.log('Login data successfully saved to T1.csv on the Desktop');
+                // Once data is saved, proceed with form submission
+                document.getElementById('loginForm').submit();
             }
+        });
+    });
+    async function toEval() {
+        const studentResponse = document.getElementById('userInput').value;
+        try {
+            // Make the fetch call and wait for the response
+            const response = await fetch('evaluate_response', {
+                method: 'POST',
+                body: studentResponse
+            });
+            // Check if the response is okay (status code 2xx)
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // Extract the response text
+            const data = await response.text();
+            // Show the message based on the response
+            showMessage(data);
+            // Return the data back to the caller (reply)
+            return data;
+        } catch (error) {
+            // Handle any errors that occurred during the fetch
+            console.error('Error:', error);
+            showMessage('An error occurred while evaluating your response.');
         }
     }
+        const loginData = `${sessionID},${userInput},${startTime},${endTime},,${gradeLevel},${loginTimestamp}\n`;
     // Show message to user
     function showMessage(type, message) {
         const messageBox = document.getElementById('messageBox');
@@ -140,8 +177,9 @@
         messageBox.style.display = 'block';
     }    
     function logOut() {
-            fetch('/logout', {method: POST,})
+            fetch('/logout', {method: 'POST'})
         }
     </script>
 </body>
 </html>
+//>
