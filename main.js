@@ -18,11 +18,9 @@ function createWindow()
     })
     win.loadURL('https://flask-game-5wzz.onrender.com');
     //win.webContents.openDevTools();
-    win.on('closed', ()=>{win = null;});
-}
 
-// Inject JavaScript code after the window is loaded
-    mainWindow.webContents.on('did-finish-load', () => {
+    // Inject JavaScript code after the window is loaded
+    win.webContents.on('did-finish-load', () => {
         const script = `
         // Event listener for login submission
         document.getElementById('loginButton').addEventListener('click', function() {
@@ -44,6 +42,11 @@ function createWindow()
 
         mainWindow.webContents.executeJavaScript(script);
         }); 
+    
+    win.on('closed', ()=>{win = null;});
+}
+
+
 // Generate session ID
 function generateSessionID(firstName, lastInitial, gradeLevel, timestamp) {
     return `${firstName.charAt(0)}${lastInitial}${gradeLevel}${timestamp}`;
