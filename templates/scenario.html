@@ -94,15 +94,15 @@
 
         <button id="submitButton" onclick="submitAnswer()">Submit Answer</button>
 
-        <div id="hintDisplay">The response will appear here...</div>
+        <div id="messageBox">The response will appear here...</div>
 
         <a href="/">
-            <button onclick="session['logged_in'] = False">Back to Welcome Page</button>
+            <button onclick=logOut()>Back to Welcome Page</button>
         </a>
     </div>
     <script>
     function submitAnswer() {
-        const studentSolution = document.getElementById('studentSolution').value;
+        const studentSolution = document.getElementById('userInput').value;
         const startTime = new Date().toISOString();
         const endTime = new Date().toISOString();
         const status = evaluationResult.status;
@@ -124,6 +124,6 @@
             }
         }
     }
-</script>
+    </script>
 </body>
 </html>
