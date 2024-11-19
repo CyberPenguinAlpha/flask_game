@@ -124,6 +124,21 @@
             }
         }
     }
+    // Show message to user
+    function showMessage(type, message) {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.textContent = message;
+    
+        // Change message box style based on the type
+        if (type === 'success') {
+            messageBox.style.color = 'green';
+        } else if (type === 'partial') {
+            messageBox.style.color = 'orange';
+        } else {
+            messageBox.style.color = 'red';
+        }
+        messageBox.style.display = 'block';
+    }    
     function logOut() {
             fetch('/logout', {method: POST,})
         }
